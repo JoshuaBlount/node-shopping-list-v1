@@ -2,13 +2,13 @@
 const express = require('express');
 // we'll use morgan to log the HTTP layer
 const morgan = require('morgan');
-// we'll use body-parser's json() method to 
+// we'll use body-parser's json() method to
 // parse JSON data sent in requests to this app
 const bodyParser = require('body-parser');
 
 // we import the ShoppingList model, which we'll
 // interact with in our GET endpoint
-const {ShoppingList} = require('./models');
+const {ShoppingList, recipes} = require('./models');
 
 const jsonParser = bodyParser.json();
 const app = express();
@@ -17,7 +17,7 @@ const app = express();
 app.use(morgan('common'));
 
 // we're going to add some items to ShoppingList
-// so there's some data to look at. Note that 
+// so there's some data to look at. Note that
 // normally you wouldn't do this. Usually your
 // server will simply expose the state of the
 // underlying database.
@@ -25,10 +25,18 @@ ShoppingList.create('beans', 2);
 ShoppingList.create('tomatoes', 3);
 ShoppingList.create('peppers', 4);
 
+
+// create shopping list items
+recipes.create('chocolate milk', ['cocoa', 'milk', 'sugar']);
+recipes.create('toast sandwich', ['bread', 'toast']);
 // when the root of this route is called with GET, return
 // all current ShoppingList items by calling `ShoppingList.get()`
 app.get('/shopping-list', (req, res) => {
   res.json(ShoppingList.get());
+});
+
+app.get('/recipes', (req,res) => {
+  res.json(recipes.get());
 });
 
 app.listen(process.env.PORT || 8080, () => {
